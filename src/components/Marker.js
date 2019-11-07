@@ -35,9 +35,12 @@ export class Marker extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    if(this.props.icon !== prevProps.icon && this.props.icon.custom){
+      this.marker.setIcon(this.props.icon.url);
+    }
     if ((this.props.map !== prevProps.map) ||
       (this.props.position !== prevProps.position) ||
-      (this.props.icon !== prevProps.icon)) {
+      (this.props.icon !== prevProps.icon && !this.props.icon.custom)) {
         if (this.marker) {
             this.marker.setMap(null);
         }
