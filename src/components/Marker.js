@@ -27,6 +27,24 @@ const wrappedPromise = function() {
     return wrappedPromise;
 }
 
+function isEquivalent(a, b) {
+  if(!a || !b)
+    return false;
+  var aProps = Object.getOwnPropertyNames(a);
+  var bProps = Object.getOwnPropertyNames(b);
+  if (aProps.length != bProps.length) {
+      return false;
+  }
+
+  for (var i = 0; i < aProps.length; i++) {
+      var propName = aProps[i];
+      if (a[propName] !== b[propName]) {
+          return false;
+      }
+  }
+  return true;
+}
+
 export class Marker extends React.Component {
 
   componentDidMount() {
@@ -35,12 +53,12 @@ export class Marker extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props.icon !== prevProps.icon && this.props.icon.custom){
-      this.marker.setIcon(this.props.icon.url);
+    if(this.props.icon && !isEquivalent(this.props.icon, prevProps.icon) && this.props.icon.custom){
+      this.marker.setIcon(this.props.icon);
     }
-    if ((this.props.map !== prevProps.map) ||
-      (this.props.position !== prevProps.position) ||
-      (this.props.icon !== prevProps.icon && !this.props.icon.custom)) {
+    if (!isEquivalent(this.props.map, prevProps.map) ||
+      !isEquivalent(this.props.position, prevProps.position) ||
+      (!isEquivalent(this.props.icon, prevProps.icon) && !this.props.icon.custom)) {
         if (this.marker) {
             this.marker.setMap(null);
         }
